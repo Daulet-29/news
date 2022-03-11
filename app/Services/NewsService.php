@@ -70,7 +70,7 @@ class NewsService implements NewsServiceInterface
         return response()->json(['message' => 'Успешно сохранено!', 'success' => true, 'data' => $model], 200);
     }
 
-    public function update(Request $request, $id)
+    public function update($id, Request $request)
     {
         try {
             $model = $this->newsRepository->find($id);
@@ -88,7 +88,7 @@ class NewsService implements NewsServiceInterface
         $updated = $this->newsRepository->update($model->id, (array)$model);
         return response()->json([
             'success' => true, 'message' => 'Успешно обновлено!', 'result' => $updated
-        ]);
+        ], 200);
     }
 
     /**

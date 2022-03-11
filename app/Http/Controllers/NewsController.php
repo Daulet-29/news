@@ -40,16 +40,6 @@ class NewsController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return void
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param Request $request
@@ -88,7 +78,7 @@ class NewsController extends Controller
      * @param $id
      * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update($id, Request $request)
     {
         if ($updated = $this->newsService->update($id, $request)){
             return response()->json([

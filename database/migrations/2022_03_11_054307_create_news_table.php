@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('description');
             $table->text('text');
             $table->text('image');
-            $table->text('publication_date');
+            $table->date('publication_date');
             $table->boolean('sign_of_publication');
             $table->timestamps();
         });
