@@ -1,0 +1,49 @@
+version: '3'
+
+networks:
+  app:
+
+volumes:
+  mysql_data:
+
+services:
+  site:
+    image: webdevops/php-nginx:8.0-alpine
+    container_name: nginx
+    ports:
+      - "88:80"
+    volumes:
+      - .:/app:delegated
+      - .deploy/logs/nginx:/var/log/nginx
+      - .deploy/conf/nginx/default.nginx:/opt/docker/etc/nginx/vhost.conf
+    networks:
+      - app
+
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost" ]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  mysql:
+    image: mariadb:10.6
+    container_name: mysql
+    hostname: mysql
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "33307:3307"
+    environment:
+      MYSQL_DATABASE: app
+      MYSQL_USER: root
+      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: secret
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - .:/app
+      - .dev/logs/mysql:/var/log/mysql
+    networks:
+      - app

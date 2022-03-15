@@ -39,12 +39,16 @@ class NewsService implements NewsServiceInterface
 
     /**
      * @param $request
-     * @return JsonResponse
+     * @return Model
      */
     public function create($request)
     {
-        $model = $this->newsRepository->create($request);
+//        Это для unit теста
+//        if (isset($request['images']) && gettype($request['images']) != "string") {
+//            $request['postFiles'] = $request['images'];
+//        }
 
+        $model = $this->newsRepository->create($request);
         if ($model && isset($request['postFiles'])) {
             foreach ($request['postFiles'] as $file) {
                 $fileName = $file->getClientOriginalName();
@@ -60,35 +64,39 @@ class NewsService implements NewsServiceInterface
                     if (Storage::exists("public/news/$model->id")){
                         Storage::deleteDirectory("public/news/$model->id");
                     }
-                    return response()->json([
-                        'success' => false,
-                        'error' => $ex->getMessage(),
-                    ]);
+//                    return response()->json([
+//                        'success' => false,
+//                        'error' => $ex->getMessage(),
+//                    ]);
                 }
             }
         }
-        return response()->json(['message' => 'Успешно сохранено!', 'success' => true, 'data' => $model], 200);
+        return $model;
+//        return response()->json(['message' => 'Успешно сохранено!', 'success' => true, 'data' => $model], 200);
     }
 
-    public function update($id, Request|\Illuminate\Http\Request $request)
+    public function update($id, array $request)
     {
         try {
             $model = $this->newsRepository->find($id);
         } catch (ModelNotFoundException $exception) {
             return response()->json(['success' => false, 'message' => $exception->getMessage()]);
         }
-        foreach ($request['postFiles'] as $file) {
-            $fileName = $file->getClientOriginalName();
-            $content = file_get_contents($file->getRealPath());
-            Storage::disk('local')->put("public/news/$model->id/".$fileName, $content);
-            $model->image = "public/news/$model->id/".$fileName;
+        if (gettype($request["postFiles"])=="array") {
+            foreach ($request["postFiles"] as $file) {
+                $fileName = $file->getClientOriginalName();
+                $content = file_get_contents($file->getRealPath());
+                Storage::disk('local')->put("public/news/$model->id/".$fileName, $content);
+                $model->image = "public/news/$model->id/".$fileName;
+                $model->update();
+            }
+        }
+        // Это для проверки без image
+        else if (gettype($request["postFiles"])=="string") {
             $model->update();
         }
 
-        $updated = $this->newsRepository->update($model->id, (array)$model);
-        return response()->json([
-            'success' => true, 'message' => 'Успешно обновлено!', 'result' => $updated
-        ], 200);
+        return $this->newsRepository->update($model->id, (array)$model);
     }
 
     /**

@@ -27,8 +27,8 @@ interface NewsServiceInterface
 
     /**
      * @param int $id
-     * @param Request $request
+     * @param array $request
      * @return mixed
      */
-    public function update(int $id, Request $request);
+    public function update(int $id, array $request);
 }

@@ -42,11 +42,19 @@ class NewsController extends Controller
      * Store a newly created resource in storage.
      *
      * @param StoreNewsRequest $request
-     * @return NewsResource
+     * @return JsonResponse
      */
     public function store(StoreNewsRequest $request)
     {
-        return new NewsResource($this->newsService->create($request->all()));
+        $result = $this->newsService->create($request->all());
+        if ($this->newsService->create($request->all())) {
+            return response()->json([
+                'success' => true, 'message' => 'Успешно сохранено!', 'result' => new NewsResource($result)
+            ], 200);
+        }
+        return response()->json([
+            'success' => false, 'message' => 'Не удалось сохранить!'
+        ], 500);
     }
 
     /**
@@ -79,7 +87,7 @@ class NewsController extends Controller
      */
     public function update($id, StoreNewsRequest $request)
     {
-        if ($updated = $this->newsService->update($id, $request->all())){
+        if ($this->newsService->update($id, $request->all())){
             return response()->json([
                 'success' => true,
                 'data' =>  $this->newsService->update($id, $request)
