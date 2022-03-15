@@ -2,21 +2,24 @@
 
 namespace Tests\Unit;
 
+use App\Models\News;
 use App\Services\NewsService;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 use App\Services\NewsServiceInterface;
+use Symfony\Contracts\Service\ServiceLocatorTrait;
 
 class NewsTest extends TestCase
 {
-    /**
-     * @var NewsServiceInterface
-     */
-    private NewsServiceInterface $newsService;
-
-    public function __construct(NewsServiceInterface $newsService)
-    {
-        $this->newsService = $newsService;
-    }
+//    /**
+//     * @var NewsServiceInterface
+//     */
+//    private NewsServiceInterface $newsService;
+//
+//    public function __construct(NewsServiceInterface $newsService)
+//    {
+//        parent::__construct($newsService);
+//        $this->newsService = $newsService;
+//    }
 
     /**
      * A basic unit test example.
@@ -28,15 +31,24 @@ class NewsTest extends TestCase
         $this->assertTrue(true);
     }
 
-    public function testNewsIndex()
+    public function test_news_update()
     {
         $request = [
             "name" => "news",
             "description" => "news",
-            "text" => 1,
-            "publication_date"=> 1,
+            "text" => "text",
+            "publication_date"=> "14.03.2022",
             "sign_of_publication" => 1
         ];
-        return $this->assertTrue($this->newsService->update(1, $request)['success']);
+        $this->assertTrue($this->newsService->update(1, $request)['success']);
+    }
+
+    public function testNewsShow()
+    {
+        $id = 1;
+        $model = News::find($id);
+        if ($model != null)
+            $this->assertTrue(true);
+//        $this->newsService->show(1)->assertStatus(200);
     }
 }

@@ -70,7 +70,7 @@ class NewsService implements NewsServiceInterface
         return response()->json(['message' => 'Успешно сохранено!', 'success' => true, 'data' => $model], 200);
     }
 
-    public function update($id, Request $request)
+    public function update($id, Request|\Illuminate\Http\Request $request)
     {
         try {
             $model = $this->newsRepository->find($id);

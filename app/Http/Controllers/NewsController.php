@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreNewsRequest;
 use App\Http\Resources\NewsResource;
 use App\Repository\NewsRepositoryInterface;
 use App\Services\NewsServiceInterface;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class NewsController extends Controller
@@ -42,10 +41,10 @@ class NewsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param StoreNewsRequest $request
      * @return NewsResource
      */
-    public function store(Request $request)
+    public function store(StoreNewsRequest $request)
     {
         return new NewsResource($this->newsService->create($request->all()));
     }
@@ -74,13 +73,13 @@ class NewsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
      * @param $id
+     * @param StoreNewsRequest $request
      * @return JsonResponse
      */
-    public function update($id, Request $request)
+    public function update($id, StoreNewsRequest $request)
     {
-        if ($updated = $this->newsService->update($id, $request)){
+        if ($updated = $this->newsService->update($id, $request->all())){
             return response()->json([
                 'success' => true,
                 'data' =>  $this->newsService->update($id, $request)
